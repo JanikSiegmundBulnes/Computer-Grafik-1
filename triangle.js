@@ -42,26 +42,43 @@ async function init() {
  }
 
   
- gl.clearColor(0.75, 0.85, 0.8, 1.0);
- gl.clear(gl.COLOR_BUFFER_BIT);
- gl.useProgram(program);
+ 
+  var r = 1.0;
+  var g = 0.0;
+  var b = 0.0;
 
 
- //Strich links
- createTriangle(gl, program, -0.5, 0.5, -0.5, -0.5, -0.4, -0.5); 
- createTriangle(gl, program, -0.5, 0.5, -0.4, 0.5, -0.4, -0.5);
- //Strich rechts
- createTriangle(gl, program, -0.1, 0.5, -0.1, -0.5, 0, -0.5); 
- createTriangle(gl, program, -0.1, 0.5, 0, 0.5, 0, -0.5);
- //Strich mitte
- createTriangle(gl, program, -0.5, 0.1, -0.5, 0, 0, 0.1);
- createTriangle(gl, program, -0.5, 0, 0, 0.1, 0, 0);
-  //Strich unten
-  createTriangle(gl, program, -0.5, -0.7, -0.5, -0.6, 0, -0.7);
-  createTriangle(gl, program, -0.5, -0.6, 0, -0.7, 0, -0.6);
+  function loop(){
+    
+    r = Math.random();
+    g = Math.random();
+    b = Math.random();
+
+    gl.clearColor(0.75, 0.85, 0.8, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+ 
+    //Strich links
+    createTriangle(gl, program, -0.5, 0.5, -0.5, -0.5, -0.4, -0.5, r, g, b); 
+    createTriangle(gl, program, -0.5, 0.5, -0.4, 0.5, -0.4, -0.5, r, g, b);
+    //Strich rechts
+    createTriangle(gl, program, -0.1, 0.5, -0.1, -0.5, 0, -0.5, r, g, b); 
+    createTriangle(gl, program, -0.1, 0.5, 0, 0.5, 0, -0.5, r, g, b);
+    //Strich mitte
+    createTriangle(gl, program, -0.5, 0.1, -0.5, 0, 0, 0.1, r, g, b);
+    createTriangle(gl, program, -0.5, 0, 0, 0.1, 0, 0, r ,g, b);
+    //Strich unten
+    createTriangle(gl, program, -0.5, -0.7, -0.5, -0.6, 0, -0.7, r, g, b);
+    createTriangle(gl, program, -0.5, -0.6, 0, -0.7, 0, -0.6, r, g, b);
+
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
 }
 
-function createTriangle(gl, program, x1, y1, x2, y2, x3, y3){
+function createTriangle(gl, program, x1, y1, x2, y2, x3, y3, r, g, b){
 
   let triangleVertices = 
   [ //X  Y
@@ -88,10 +105,13 @@ function createTriangle(gl, program, x1, y1, x2, y2, x3, y3){
   );
   gl.enableVertexAttribArray(positionAttribLocation);
  
-  let locaton = gl.getUniformLocation(program, 'color');
-  gl.uniform3f(locaton, 1, 0, 0);
+  let location = gl.getUniformLocation(program, 'color');
+  gl.uniform3f(location, r, g, b);
  
   gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+
 }
+
 
 window.onload = init;
