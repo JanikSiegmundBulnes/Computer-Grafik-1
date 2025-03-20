@@ -41,48 +41,65 @@ async function init() {
    console.error('Error validating program', gl.getProgramInfoLog(program));
  }
 
- // create triangle buffer
- let triangleVertices = 
- [ //X  Y     R    G    B
-   0.0, 0.5, 1.0, 1.0, 0.0,
-   -0.5, -0.5, 0.7, 0.0, 1.0,
-   0.5, -0.5, 0.2, 0.0, 0.6
- ];
- let triangleVertexBufferObject = gl.createBuffer();
- gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
- gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
- gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
+  
  gl.clearColor(0.75, 0.85, 0.8, 1.0);
-
- // draw
  gl.clear(gl.COLOR_BUFFER_BIT);
  gl.useProgram(program);
- gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
- let positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
- gl.vertexAttribPointer(
-   positionAttribLocation,
-   2,
-   gl.FLOAT,
-   gl.FALSE,
-   5 * Float32Array.BYTES_PER_ELEMENT,
-   0 * Float32Array.BYTES_PER_ELEMENT
- );
- gl.enableVertexAttribArray(positionAttribLocation);
 
- let colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
- gl.vertexAttribPointer(
-   colorAttribLocation,
-   3,
-   gl.FLOAT,
-   gl.FALSE,
-   5 * Float32Array.BYTES_PER_ELEMENT,
-   2 * Float32Array.BYTES_PER_ELEMENT
- );
- gl.enableVertexAttribArray(colorAttribLocation);
 
- gl.drawArrays(gl.TRIANGLES, 0, 3);
+ //Strich links
+ createTriangle(gl, program, -0.5, 0.5, -0.5, -0.5, -0.4, -0.5); 
+ createTriangle(gl, program, -0.5, 0.5, -0.4, 0.5, -0.4, -0.5);
+ //Strich rechts
+ createTriangle(gl, program, -0.1, 0.5, -0.1, -0.5, 0, -0.5); 
+ createTriangle(gl, program, -0.1, 0.5, 0, 0.5, 0, -0.5);
+ //Strich mitte
+ createTriangle(gl, program, -0.5, 0.1, -0.5, 0, 0, 0.1);
+ createTriangle(gl, program, -0.5, 0, 0, 0.1, 0, 0);
+  //Strich unten
+  createTriangle(gl, program, -0.5, -0.7, -0.5, -0.6, 0, -0.7);
+  createTriangle(gl, program, -0.5, -0.6, 0, -0.7, 0, -0.6);
+}
 
+function createTriangle(gl, program, x1, y1, x2, y2, x3, y3){
+
+  let triangleVertices = 
+  [ //X  Y     R    G    B
+    x1, y1, 1.0, 0.0, 0.0,
+    x2, y2, 1.0, 0.0, 0.0,
+    x3, y3, 1.0, 0.0, 0.0
+  ];
+  let triangleVertexBufferObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+ 
+  // draw
+  gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
+  let positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+  gl.vertexAttribPointer(
+    positionAttribLocation,
+    2,
+    gl.FLOAT,
+    gl.FALSE,
+    5 * Float32Array.BYTES_PER_ELEMENT,
+    0 * Float32Array.BYTES_PER_ELEMENT
+  );
+  gl.enableVertexAttribArray(positionAttribLocation);
+ 
+  let colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+  gl.vertexAttribPointer(
+    colorAttribLocation,
+    3,
+    gl.FLOAT,
+    gl.FALSE,
+    5 * Float32Array.BYTES_PER_ELEMENT,
+    2 * Float32Array.BYTES_PER_ELEMENT
+  );
+  gl.enableVertexAttribArray(colorAttribLocation);
+ 
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 
 window.onload = init;
