@@ -1,5 +1,10 @@
 'use strict';
 
+var r;
+var g;
+var b;
+var frames;
+
 async function init() {
  console.log('Hallo');
 
@@ -48,14 +53,16 @@ async function init() {
    console.error('Error validating program', gl.getProgramInfoLog(program));
  }
  let hex = '#dc3c05';
- var r = hexToRgb(hex).r/255;
- var g = hexToRgb(hex).g/255;
- var b = hexToRgb(hex).b/255;
+ r = hexToRgb(hex).r/255;
+ g = hexToRgb(hex).g/255;
+ b = hexToRgb(hex).b/255;
  
+ frames = 0;
  
 
   function loop(){
-
+    frames++;
+    calculateColor(frames);
 
     //Hintergrund festlegen
     gl.clearColor(0.75, 0.85, 0.8, 1.0);
@@ -139,6 +146,20 @@ function hexToRgb(hex) {
   } : null;
 }
 
+function calculateColor(){
+  if(frames > 2){
+    if(r <= 0.9){
+      r = r + 0.01;
+    } else r = 0;
+    if(g <= 0.9){
+      g = g + 0.01;
+    } else g = 0;
+    if(b <= 0.9){
+      b = b + 0.01;
+    } else b = 0;
 
+    frames = 0;
+  }
+}
 
 window.onload = init;
