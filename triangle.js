@@ -6,7 +6,6 @@ var b;
 var frames;
 
 async function init() {
- console.log('Hallo');
 
  // "canvas" Element aus der HTML holen
  let canvas = document.getElementById('cg1-canvas');
