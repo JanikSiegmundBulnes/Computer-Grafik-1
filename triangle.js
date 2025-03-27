@@ -3,7 +3,12 @@
 var r;
 var g;
 var b;
-var frames;
+var framesColor;
+var framesPos;
+var offsetX;
+var offsetY;
+var increaseX;
+var increaseY;
 
 async function init() {
 
@@ -56,12 +61,20 @@ async function init() {
  g = hexToRgb(hex).g/255;
  b = hexToRgb(hex).b/255;
  
- frames = 0;
- 
+ framesColor = 0;
+ framesPos = 0;
+
+ offsetX = 0;
+ offsetY = 0;
+ increaseX = true;
+ increaseY = false;
+
 
   function loop(){
-    frames++;
-    calculateColor(frames);
+    framesColor++;
+    framesPos++;
+    calculateColor();
+    calculateNewPost();
 
     //Hintergrund festlegen
     gl.clearColor(0.75, 0.85, 0.8, 1.0);
@@ -70,7 +83,6 @@ async function init() {
     //Shader Programm an WebGL zuweisen, um zu nutzen
     gl.useProgram(program);
  
-
     //Strich links
     createTriangle(gl, program, -0.5, 0.5, -0.5, -0.5, -0.4, -0.5, r, g, b); 
     createTriangle(gl, program, -0.5, 0.5, -0.4, 0.5, -0.4, -0.5, r, g, b);
@@ -85,9 +97,9 @@ async function init() {
     createTriangle(gl, program, -0.5, -0.6, 0, -0.7, 0, -0.6, r, g, b);
 
 
-    requestAnimationFrame(loop);
+    requestAnimationFrame(loop); //ruft function "loop" beim neuen Frame auf
   }
-  requestAnimationFrame(loop);
+  requestAnimationFrame(loop); //startet erstmals die "loop" funktion
 
 }
 
@@ -126,9 +138,12 @@ function createTriangle(gl, program, x1, y1, x2, y2, x3, y3, r, g, b){
   );
   gl.enableVertexAttribArray(positionAttribLocation); //Attribut 'vertPosition' aktivieren
  
-  // Location der Farbe im Shader holen und auf 'r, g, b' setzen
+  // Location der Farbe im Shader (Pointer auf "color") holen und auf 'r, g, b' setzen
   let location = gl.getUniformLocation(program, 'color');
   gl.uniform3f(location, r, g, b);
+
+  let offset = gl.getUniformLocation(program, 'offset');
+  gl.uniform2f(offset, offsetX, offsetY);
  
   // Dreieck mit den drei angegebenen Punkten zeichnen
   gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -136,6 +151,8 @@ function createTriangle(gl, program, x1, y1, x2, y2, x3, y3, r, g, b){
 
 }
 
+
+//berechnet rgb werte aus einem hexadezimalcode
 function hexToRgb(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
@@ -145,20 +162,49 @@ function hexToRgb(hex) {
   } : null;
 }
 
+// steigert die rgb werte sequenziell und setzt diese bei 1 zurueck
 function calculateColor(){
-  if(frames > 2){
-    if(r <= 0.9){
+  if(framesColor > 2){
+    if(r <= 0.99){
       r = r + 0.01;
     } else r = 0;
-    if(g <= 0.9){
+    if(g <= 0.99){
       g = g + 0.01;
     } else g = 0;
-    if(b <= 0.9){
+    if(b <= 0.99){
       b = b + 0.01;
     } else b = 0;
 
-    frames = 0;
+    framesColor = 0;
   }
 }
+
+//
+function calculateNewPost(){
+  
+  if(framesPos > 2){
+    if(increaseX){
+      offsetX = offsetX+0.01;
+    } else offsetX = offsetX-0.01;
+    if(increaseY){
+      offsetY = offsetY+0.01;
+    } else offsetY = offsetY-0.01;
+    if(offsetX>0.15){
+      increaseX=false;
+    }
+    if(offsetY>0.15){
+      increaseY=false;
+    }
+    if(offsetX<-0.15){
+      increaseX=true;
+    }
+    if(offsetY<-0.15){
+      increaseY=true;
+    }
+    framesPos = 0;
+  }
+}
+
+
 
 window.onload = init;
